@@ -1,17 +1,24 @@
 # campus_marketplace_w7
 
-A new Flutter project.
+MDSD Lab 7: Google AI Studio & Gemini API Integration
 
-## Getting Started
+แอป Campus Marketplace ที่ต่อยอดจากใบงานสัปดาห์ที่ 5-6 เพิ่มหน้าลงประกาศขายสินค้าที่ให้ Gemini Vision ช่วยร่างชื่อประกาศ หมวดหมู่ และคำบรรยายจากรูปสินค้า แล้วให้ผู้ใช้ตรวจทานแก้ไขก่อนยืนยัน
 
-This project is a starting point for a Flutter application.
+## โครงสร้างหลัก
 
-A few resources to get you started if this is your first Flutter project:
+- `lib/services/gemini_service.dart` เรียก Gemini แบบข้อความ
+- `lib/services/gemini_vision_service.dart` ส่งรูปภาพแบบ Base64 พร้อม Prompt และใช้ `responseSchema` บังคับให้ได้ JSON
+- `lib/models/listing_draft.dart` โมเดลร่างประกาศ
+- `lib/screens/sell_item_page.dart` หน้าลงประกาศขาย เลือกรูป วิเคราะห์ด้วย AI ตรวจทานและยืนยัน
+- `lib/screens/main_scaffold.dart` Bottom Navigation Bar ด้วย `IndexedStack`
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## การรัน
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter pub get
+flutter run -d chrome --dart-define=GEMINI_API_KEY=YOUR_API_KEY
+```
+
+ห้าม commit API Key ให้ส่งผ่าน `--dart-define` เท่านั้น
+
+ใบงานและผลการทดลอง: https://github.com/Kritternai/MDSD-Lab7-Labsheet-2026
