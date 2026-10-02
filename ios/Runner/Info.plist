@@ -66,5 +66,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>แอปนี้ต้องการเข้าถึงคลังภาพของคุณ เพื่อให้คุณเลือกรูปสินค้าสำหรับลงประกาศขาย</string>
 </dict>
 </plist>
