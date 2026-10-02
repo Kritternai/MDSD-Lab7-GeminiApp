@@ -28,6 +28,21 @@ class _SellItemPageState extends State<SellItemPage> {
   String? _errorMessage;
   ListingDraft? _draft;
 
+  final _titleController = TextEditingController();
+  final _categoryController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  // ร่างประกาศที่ผู้ใช้ยืนยันแล้ว เก็บไว้ใน State ก่อน (บันทึกถาวรในสัปดาห์ที่ 8)
+  final List<ListingDraft> _confirmedDrafts = [];
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _categoryController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (picked == null) return;
@@ -56,7 +71,12 @@ class _SellItemPageState extends State<SellItemPage> {
         mimeType: _selectedImage!.mimeType ?? 'image/jpeg',
         prompt: _prompt,
       );
-      setState(() => _draft = draft);
+      setState(() {
+        _draft = draft;
+        _titleController.text = draft.title;
+        _categoryController.text = draft.category;
+        _descriptionController.text = draft.description;
+      });
     } catch (e) {
       setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
     } finally {
@@ -83,22 +103,66 @@ class _SellItemPageState extends State<SellItemPage> {
         child: Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
       );
     }
-    final draft = _draft;
-    if (draft == null) return const SizedBox.shrink();
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(draft.title, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 4),
-            Chip(label: Text(draft.category)),
-            const SizedBox(height: 8),
-            Text(draft.description),
-          ],
+    if (_draft == null) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text('ตรวจทานและแก้ไขร่างประกาศจาก AI ก่อนยืนยัน'),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _titleController,
+          decoration: const InputDecoration(
+            labelText: 'ชื่อประกาศ',
+            border: OutlineInputBorder(),
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _categoryController,
+          decoration: const InputDecoration(
+            labelText: 'หมวดหมู่',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          controller: _descriptionController,
+          maxLines: 4,
+          decoration: const InputDecoration(
+            labelText: 'คำบรรยาย',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        const SizedBox(height: 16),
+        FilledButton.icon(
+          onPressed: _confirmDraft,
+          icon: const Icon(Icons.check),
+          label: const Text('ยืนยันร่างประกาศ'),
+        ),
+      ],
+    );
+  }
+
+  void _confirmDraft() {
+    final finalDraft = ListingDraft(
+      title: _titleController.text.trim(),
+      category: _categoryController.text.trim(),
+      description: _descriptionController.text.trim(),
+    );
+
+    setState(() {
+      _confirmedDrafts.add(finalDraft);
+      _selectedImage = null;
+      _imageBytes = null;
+      _draft = null;
+      _errorMessage = null;
+      _titleController.clear();
+      _categoryController.clear();
+      _descriptionController.clear();
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('บันทึกร่างประกาศเรียบร้อยแล้ว')),
     );
   }
 
