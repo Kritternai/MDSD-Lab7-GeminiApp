@@ -143,7 +143,7 @@ class _SellItemPageState extends State<SellItemPage> {
     );
   }
 
-  void _confirmDraft() {
+  Future<void> _confirmDraft() async {
     final finalDraft = ListingDraft(
       title: _titleController.text.trim(),
       category: _categoryController.text.trim(),
@@ -161,6 +161,10 @@ class _SellItemPageState extends State<SellItemPage> {
       _descriptionController.clear();
     });
 
+    // รอ 100ms ให้ Flutter Web render frame ให้พร้อมก่อนแสดง SnackBar
+    await Future.delayed(const Duration(milliseconds: 100));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('บันทึกร่างประกาศเรียบร้อยแล้ว')),
     );
