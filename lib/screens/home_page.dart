@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../models/item.dart';
 import '../models/cart_model.dart';
 import '../repositories/item_repository.dart';
+import '../services/gemini_service.dart';
 import 'checkout_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,6 +40,23 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+      // ปุ่มทดสอบ Gemini ชั่วคราว (ขั้นตอนที่ 2.3)
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.auto_awesome),
+        label: const Text('ทดสอบ Gemini'),
+        onPressed: () async {
+          final messenger = ScaffoldMessenger.of(context);
+          try {
+            final text = await GeminiService()
+                .generateText('ช่วยแต่งประโยคทักทายลูกค้าร้านค้าออนไลน์แบบเป็นกันเอง');
+            print('Gemini: $text');
+            messenger.showSnackBar(SnackBar(content: Text(text)));
+          } catch (e) {
+            print('Gemini error: $e');
+            messenger.showSnackBar(SnackBar(content: Text('$e')));
+          }
+        },
       ),
       body: FutureBuilder<List<Item>>(
         future: _itemsFuture,
